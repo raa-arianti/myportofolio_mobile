@@ -18,7 +18,8 @@ class InfoCard extends StatelessWidget {
       // Bayangan tipis supaya kartu terlihat terangkat dari latar.
       elevation: 2.0,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        // Jarak samping dibuat kecil supaya NPM muat satu baris di layar ponsel.
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 16.0),
         // Judul dan isi disusun vertikal, di tengah kartu.
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
