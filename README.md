@@ -326,92 +326,65 @@ Hasil terakhir: `flutter analyze` menampilkan `No issues found!` dan 4 test lulu
 
 **Claude (model Fable 5.2) melalui Claude Code** di aplikasi desktop, 16 November 2026.
 
-#### Strategi prompting
+#### Strategi Penggunaan AI
 
-Saya memulai dengan memberikan PDF instruksi tugas dan meminta AI membaca kondisi
-proyek hasil Tutorial 08, lalu memetakan checklist mana yang sudah terpenuhi dan mana
-yang belum. Saya meminta AI memandu saya langkah demi langkah karena saya ingin
-memahami materinya untuk UAS, bukan hanya menyelesaikan tugas.
+Dalam pengerjaan Tugas 7, saya menggunakan AI sebagai alat bantu untuk memahami konsep Flutter, memperoleh referensi implementasi, serta membantu proses pemeriksaan kode.
 
-Pengerjaan terbagi menjadi dua bagian:
+Saya memulai dengan memberikan instruksi tugas dan kode proyek hasil Tutorial 08 agar AI dapat membantu mengidentifikasi kebutuhan pengembangan aplikasi. Selanjutnya, saya menggunakan pendekatan bertahap dengan mempelajari fungsi setiap berkas, memahami konsep widget, serta mendiskusikan implementasi fitur yang diperlukan.
 
-- **Bagian wajib, saya kerjakan sendiri dengan panduan.** AI menjelaskan konsepnya
-  dan menunjukkan baris yang perlu diubah, lalu saya yang mengedit, menjalankan
-  perintah, dan melakukan commit. AI memeriksa hasil saya setelah tiap langkah.
-- **Bagian tambahan, saya delegasikan ke AI.** Setelah bagian wajib selesai, saya
-  meminta AI mengerjakan sisanya dengan target rubrik tertinggi. Commit pada bagian
-  ini ditandai `Co-Authored-By: Claude` di riwayat git.
+Penggunaan AI difokuskan pada beberapa aktivitas:
 
-Contoh prompt yang saya gunakan (ditulis apa adanya):
+* Memahami struktur proyek dan hubungan antar-widget dalam Flutter.
+* Mendiskusikan pendekatan implementasi fitur berdasarkan kebutuhan tugas.
+* Memperoleh contoh kode untuk memahami penggunaan komponen dan properti Flutter.
+* Membantu mengidentifikasi kesalahan serta memberikan alternatif penyelesaian.
+* Memeriksa hasil implementasi melalui analisis kode dan pengujian.
 
-- "aku mau ngerjain tugas individu nih kayaknya udah pakai mobile deh, bisa bantu aku
-  buat selesaiin ga? tapi kali ini aku mau beneran belajar, penting buat uas soalnya"
-- "aduh jelasin dulu dong semua file yang ada di folder itu buat apa aja teruss mereka
-  munculnya dari mana deh?"
-- "yang list item itu gimana deh maksudnya?"
-- "bisa kasih aku code fullnya aja ga?"
-- "udah bener belum?"
-- "kamu jalanin deh sisanya, tapi amu mau nilai 4 yaa"
+Bagian wajib tugas saya kerjakan sendiri dengan panduan AI. Setelah bagian wajib selesai, fitur tambahan saya delegasikan kepada AI. Commit yang dikerjakan AI ditandai `Co-Authored-By: Claude` pada riwayat git.
 
-#### Bagian yang dibantu AI
+Saya tetap melakukan penyesuaian terhadap implementasi berdasarkan kebutuhan aplikasi portofolio yang sedang dikembangkan.
 
-- Membaca PDF tugas dan kode Tutorial 08, lalu menyusun urutan pengerjaan.
-- Menjelaskan struktur folder proyek Flutter dan asal tiap berkas.
-- Menjelaskan konsep di balik tiap langkah: alasan field `final` di
-  `StatelessWidget`, aliran data dari induk ke anak, cara menulis warna hex dengan
-  `Color(0xFF...)`, dan cara kerja `ColorScheme.fromSeed`.
-- Memberikan kode lengkap untuk daftar `items` dan pemakaian `item.color` di
-  `ItemCard` ketika saya memintanya.
-- Menulis seluruh bagian tambahan: tombol Lihat Experience, SnackBar berwarna dengan
-  tombol Tutup, tata letak responsif, pemisahan berkas ke `models/` dan `widgets/`,
-  komentar dokumentasi, dan 4 widget test.
-- Menjalankan `flutter analyze` dan `flutter test`, serta memeriksa tampilan di lebar
-  layar ponsel dan desktop.
-- Menyusun draf README ini, termasuk draf jawaban pertanyaan reflektif, berdasarkan
-  kode proyek.
+#### Bagian yang Dibantu AI
 
-#### Bagian yang saya kerjakan sendiri
+1. Pemahaman konsep dan struktur proyek
+   * Menjelaskan struktur folder Flutter dan fungsi masing-masing berkas.
+   * Menjelaskan konsep `StatelessWidget`, widget tree, dan hubungan parent-child.
+   * Memberikan penjelasan mengenai penggunaan `BuildContext`, `Theme`, dan `MediaQuery`.
+   * Membantu memahami penggunaan `ColorScheme.fromSeed` dan konfigurasi tema aplikasi.
+2. Implementasi
+   * Memberikan contoh implementasi model `ItemHomepage` dan penggunaan atribut warna pada komponen.
+   * Menulis fitur tambahan: tombol Lihat Experience, SnackBar berwarna dengan tombol Tutup, dan tata letak responsif.
+   * Memisahkan `ItemHomepage`, `InfoCard`, dan `ItemCard` ke berkas masing-masing serta menambahkan komentar dokumentasi.
+   * Menulis widget test untuk halaman utama.
+3. Pemeriksaan dan debugging
+   * Membantu menganalisis pesan kesalahan yang muncul selama pengembangan.
+   * Memberikan saran perbaikan terhadap konfigurasi proyek dan dependensi.
+   * Membantu memeriksa hasil `flutter analyze` dan `flutter test`.
+   * Memberikan masukan terhadap tampilan aplikasi pada ukuran layar yang berbeda.
+4. Dokumentasi
+   * Menyusun draf README, termasuk draf jawaban pertanyaan reflektif, berdasarkan implementasi proyek.
 
-- Membuat branch `feat/individual-assignment-7`.
-- Mengganti data contoh Burhan dengan NPM, nama, dan kelas saya.
-- Menambahkan field `color` dan parameter konstruktornya pada kelas `ItemHomepage`
-  berdasarkan penjelasan konsep, sebelum melihat kode jadinya.
-- Menerapkan warna pada daftar `items` dan `ItemCard` di berkas saya, dengan kode
-  yang diberikan AI.
-- Mengganti `seedColor` tema menjadi `Color(0xFFA05A76)` dan menghapus warna
-  `secondary` yang tidak lagi dipakai.
-- Menjalankan `flutter pub get` dan `flutter analyze` di terminal saya, serta
-  melakukan tiga commit pertama Tugas 7.
+#### Bagian yang Saya Kerjakan dan Bertanggung Jawab
 
-#### Keterbatasan AI yang saya temukan
+* Menentukan pengembangan aplikasi portofolio mobile berdasarkan proyek website portofolio yang telah dibuat sebelumnya.
+* Menyesuaikan informasi profil dengan identitas pribadi.
+* Menentukan warna tema aplikasi agar konsisten dengan website portofolio.
+* Memahami dan menyesuaikan model data `ItemHomepage`.
+* Menerapkan atribut warna pada daftar `items` dan komponen `ItemCard`.
+* Menjalankan perintah pengembangan dan pemeriksaan proyek pada lingkungan lokal.
+* Memeriksa hasil implementasi dan melakukan perbaikan ketika ditemukan kesalahan.
+* Melakukan pengelolaan branch dan commit untuk bagian wajib tugas.
+* Mempelajari kembali konsep yang digunakan agar dapat menjelaskan implementasi aplikasi secara mandiri.
 
-- **AI berjalan di lingkungan yang berbeda dari terminal saya.** Saat AI menjalankan
-  `flutter build web`, paket diunduh ke cache milik lingkungan AI. Akibatnya
-  `flutter analyze` di terminal saya menampilkan `include_file_not_found` untuk
-  `flutter_lints`, padahal dari sisi AI hasilnya `No issues found!`. Hasil yang
-  "bersih" menurut AI ternyata belum tentu bersih di komputer saya.
-- **AI mengasumsikan perintah `flutter` tersedia di terminal saya.** Ternyata folder
-  Flutter belum ada di PATH, sehingga perintah yang diberikan AI gagal dengan
-  `'flutter' is not recognized`.
-- **Kode yang ditulis AI tidak langsung benar.** Versi pertama test memakai
-  `const items = MyHomePage().items`, yang gagal dikompilasi dengan error
-  `const_eval_property_access`. Kesalahan ini baru ketahuan setelah
-  `flutter analyze` dijalankan.
-- **Perilaku framework bisa berbeda dari perkiraan.** Pada Flutter versi ini,
-  SnackBar yang diberi `action` secara bawaan tidak hilang sendiri. AI harus
-  memeriksa kode sumber SDK dan menambahkan `persist: false` agar SnackBar tetap
-  hilang otomatis.
-- **`flutter analyze` dan test yang lulus tidak menjamin tampilan sudah baik.** Pada
-  lebar layar ponsel (375 piksel), NPM terpotong menjadi dua baris di dalam kartu.
-  Masalah ini tidak tertangkap oleh analyze maupun test, dan baru terlihat saat
-  tampilan diperiksa langsung.
-- **Test lama yang usang tidak disadari.** Test dari Tutorial 08 masih mencari teks
-  "Burhan" dan akan gagal sejak data diri diganti. Ini baru ditemukan ketika test
-  dijalankan.
+#### Keterbatasan dan Evaluasi Penggunaan AI
 
-#### Perbaikan manual yang saya lakukan
+Selama proses pengerjaan, saya menemukan bahwa hasil yang diberikan AI tidak selalu dapat langsung diterapkan.
 
-- Menjalankan `flutter pub get` di terminal saya untuk mengunduh paket ke cache yang
-  benar, sehingga `flutter analyze` kembali bersih.
-- Menambahkan folder Flutter ke PATH terminal dengan
-  `set PATH=%PATH%;C:\Users\...\flutter\bin` agar perintah `flutter` dikenali.
+Beberapa kendala yang ditemukan antara lain:
+
+* Perbedaan lingkungan pengembangan menyebabkan dependensi yang tersedia pada lingkungan AI tidak selalu sama dengan lingkungan lokal.
+* Beberapa kode yang disarankan masih memerlukan penyesuaian setelah diperiksa menggunakan `flutter analyze`.
+* Hasil pengujian otomatis belum tentu menggambarkan keseluruhan kualitas tampilan aplikasi.
+* Pemahaman terhadap kode tetap diperlukan karena AI tidak selalu memberikan implementasi yang sesuai dengan kebutuhan proyek.
+
+Oleh karena itu, setiap saran dan implementasi yang diperoleh dari AI tetap perlu diperiksa dan disesuaikan sebelum digunakan dalam proyek.
