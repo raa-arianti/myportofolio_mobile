@@ -340,8 +340,7 @@ Penggunaan AI difokuskan pada beberapa aktivitas:
 * Membantu mengidentifikasi kesalahan serta memberikan alternatif penyelesaian.
 * Memeriksa hasil implementasi melalui analisis kode dan pengujian.
 
-Bagian wajib tugas saya kerjakan sendiri dengan panduan AI. Setelah bagian wajib selesai, fitur tambahan saya delegasikan kepada AI. Commit yang dikerjakan AI ditandai `Co-Authored-By: Claude` pada riwayat git.
-
+Bagian wajib tugas saya kerjakan sendiri dengan panduan AI. Setelah bagian wajib selesai, fitur tambahan saya delegasikan kepada AI.
 Saya tetap melakukan penyesuaian terhadap implementasi berdasarkan kebutuhan aplikasi portofolio yang sedang dikembangkan.
 
 #### Bagian yang Dibantu AI
