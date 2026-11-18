@@ -19,20 +19,41 @@ Semester Gasal 2026/2027.
 
 ## Tentang Proyek
 
-Sampai Tugas 7, aplikasi terdiri atas satu halaman utama:
+Sampai Tugas 8, aplikasi terdiri atas tiga halaman:
+
+**Halaman utama** (`MyHomePage`)
 
 - **Tiga kartu profil** (`InfoCard`) di bagian atas: NPM, nama, dan kelas.
-- **Empat tombol menu** (`ItemCard`): Lihat Proyek, Tambah Proyek, Lihat Experience,
-  dan Logout. Tiap tombol punya ikon dan warna latarnya sendiri.
+- **Lima tombol menu** (`ItemCard`): Lihat Proyek, Tambah Proyek, Lihat Experience,
+  Tambah Experience, dan Logout. Tiap tombol punya ikon dan warna latarnya sendiri.
 - **SnackBar** yang muncul saat tombol ditekan, berisi
   "Kamu telah menekan tombol [Nama Tombol]!". Warnanya mengikuti tombol yang ditekan
   dan ada tombol **Tutup** untuk menutupnya lebih cepat.
-- **Tema** aplikasi memakai warna aksen yang sama dengan website portofolio (`#A05A76`).
-- **Tata letak responsif**: tombol tersusun 2 kolom di layar ponsel dan 4 kolom di
-  layar lebar, dan halaman bisa digulir di layar pendek.
+- Tombol **Tambah Proyek** dan **Tambah Experience** membuka form-nya dengan
+  `Navigator.push()`, jadi tombol Back perangkat kembali ke halaman utama.
 
-Tombol-tombol ini belum membuka halaman lain. Navigasi dan pengambilan data dari API
-Django akan ditambahkan pada minggu-minggu berikutnya.
+**Form Tambah Proyek** (`ProjectFormPage`, Tutorial 09) dan **form Tambah Experience**
+(`ExperienceFormPage`, Tugas 8)
+
+- Setiap kolom divalidasi. Tombol Simpan menampilkan ringkasan isian dalam dialog
+  hanya jika semua isian valid. Tombol OK menutup dialog dan mengosongkan form.
+- Field form Experience mengikuti model `Experience` di website: judul (wajib,
+  maksimal 255 karakter), deskripsi (wajib), kategori (dropdown), URL gambar
+  (opsional, harus `http(s)://`), dan tanggal selesai (opsional, dipilih dari kalender;
+  kosong berarti masih berjalan).
+
+**Navigasi dan tampilan**
+
+- **Drawer** (`LeftDrawer`) dengan opsi Home, Add Project, dan Add Experience, dipasang
+  di ketiga halaman.
+- **Tema** aplikasi memakai warna aksen yang sama dengan website portofolio (`#A05A76`):
+  AppBar, header drawer, dan tombol Simpan semuanya mengambil warna dari tema.
+- **Tata letak responsif**: tombol menu tersusun 2 kolom di layar ponsel dan 4 kolom di
+  layar lebar, dan semua halaman bisa digulir sehingga tombol Simpan tetap terjangkau
+  di layar pendek atau saat papan ketik muncul.
+
+Data form belum disimpan ke database. Pengiriman ke API Django akan ditambahkan pada
+minggu-minggu berikutnya.
 
 ## Teknologi
 
@@ -40,22 +61,27 @@ Django akan ditambahkan pada minggu-minggu berikutnya.
 |---|---|
 | Framework | Flutter 3.47.5 (channel stable) |
 | Bahasa | Dart (SDK `^3.13.4`) |
-| Desain | Material 3 |
+| Desain | Material 3, lewat paket `material_ui` |
 | Aturan lint | `flutter_lints` |
 
 ## Struktur Proyek
 
 ```
 lib/
-├── main.dart                 # titik masuk: runApp, MaterialApp, dan tema
-├── menu.dart                 # MyHomePage, halaman utama
+├── main.dart                   # titik masuk: runApp, MaterialApp, dan tema
 ├── models/
-│   └── item_homepage.dart    # ItemHomepage: nama, ikon, dan warna satu tombol
+│   └── item_homepage.dart      # ItemHomepage: nama, ikon, warna, dan halaman tujuan tombol
+├── screens/
+│   ├── menu.dart               # MyHomePage, halaman utama
+│   ├── project_form.dart       # ProjectFormPage, form Tambah Proyek (Tutorial 09)
+│   └── experience_form.dart    # ExperienceFormPage, form Tambah Experience (Tugas 8)
 └── widgets/
-    ├── info_card.dart        # InfoCard, kartu profil
-    └── item_card.dart        # ItemCard, tombol menu dan SnackBar-nya
+    ├── info_card.dart          # InfoCard, kartu profil
+    ├── left_drawer.dart        # LeftDrawer, menu navigasi samping
+    └── project_card.dart       # ItemCard, tombol menu, SnackBar, dan navigasinya
 test/
-└── widget_test.dart          # widget test untuk halaman utama
+├── widget_test.dart            # halaman utama, drawer, dan form proyek
+└── experience_form_test.dart   # form Experience
 ```
 
 Folder `android/`, `ios/`, `web/`, `windows/`, `linux/`, dan `macos/` dibuat oleh
@@ -81,7 +107,8 @@ flutter analyze
 flutter test
 ```
 
-Hasil terakhir: `flutter analyze` menampilkan `No issues found!` dan 4 test lulus.
+Hasil terakhir (Tugas 8): `flutter analyze` menampilkan `No issues found!` dan 13 test
+lulus.
 
 ---
 
@@ -107,6 +134,34 @@ Hasil terakhir: `flutter analyze` menampilkan `No issues found!` dan 4 test lulu
   tombol 2 atau 4 kolom, dan halaman bisa digulir.
 - Memisahkan `ItemHomepage`, `InfoCard`, dan `ItemCard` ke berkas masing-masing.
 - Mengganti test bawaan yang sudah usang dengan 4 test untuk halaman utama.
+
+### Tutorial 09, Navigation, Layouts, Forms, and Input Elements
+
+- Memasang paket `material_ui` dan mengganti semua import `flutter/material.dart`.
+- Membuat `LeftDrawer` dengan opsi Home dan Add Project.
+- Membuat `ProjectFormPage` dengan `Form`, `GlobalKey<FormState>`, validasi, dan
+  dialog ringkasan isian.
+- Membuat tombol **Tambah Proyek** membuka form dengan `Navigator.push()`.
+- Memindahkan halaman ke `lib/screens/` dan `ItemCard` ke `widgets/project_card.dart`.
+
+### Tugas 8, Form Experience
+
+- Menyimpan halaman tujuan tiap tombol di `ItemHomepage.page`, sehingga `ItemCard`
+  tidak perlu lagi memeriksa nama tombol dengan `if`.
+- Membuat `ExperienceFormPage` dengan field dan aturan validasi yang sama dengan model
+  dan form `Experience` di website Django.
+- Menambahkan kartu **Tambah Experience** di halaman utama dan opsi **Add Experience**
+  di drawer.
+- Fitur tambahan di luar checklist:
+  - pemilih tanggal (`showDatePicker`) untuk tanggal selesai, dengan tombol hapus
+    tanggal dan penolakan tanggal di masa depan;
+  - validasi format URL dan penghitung karakter judul (`maxLength`);
+  - papan ketik yang sesuai jenis isian (`TextInputType.url`, `multiline`) dan tombol
+    Next di papan ketik;
+  - validasi ulang otomatis saat kolom diperbaiki (`AutovalidateMode.onUserInteraction`);
+  - form dibatasi lebar 600 piksel di layar lebar.
+- Menambahkan 6 test untuk form Experience: dibuka dari kartu dan drawer, kembali ke
+  Home, input tidak valid dan valid, kalender, dan layar selebar ponsel.
 
 ---
 
@@ -316,6 +371,102 @@ Hasil terakhir: `flutter analyze` menampilkan `No issues found!` dan 4 test lulu
    langsung terlihat dengan hot reload, karena perubahan itu ada di dalam widget yang
    dibangun ulang.
 
+### Tugas 8
+
+1. **Perbedaan `Navigator.push()`, `Navigator.pushReplacement()`, dan `Navigator.pop()`;
+   metode untuk kartu aksi; dan cara opsi Home kembali ke halaman utama.**
+
+   `Navigator` menyimpan halaman-halaman (route) sebagai tumpukan (stack). Halaman yang
+   tampil adalah yang paling atas.
+
+   | Metode | Yang terjadi pada tumpukan | Tombol Back setelahnya |
+   |---|---|---|
+   | `push()` | Halaman baru ditaruh di atas halaman sekarang. | Kembali ke halaman sebelumnya. |
+   | `pushReplacement()` | Halaman paling atas dibuang, lalu diganti halaman baru. | Tidak kembali ke halaman yang dibuang. |
+   | `pop()` | Halaman paling atas dibuang, sehingga halaman di bawahnya tampil. | (Ini sendiri adalah aksi "kembali".) |
+
+   Kartu aksi **Tambah Experience** memakai `Navigator.push()` (di `ItemCard`, berkas
+   `widgets/project_card.dart`). Tumpukannya menjadi `[Menu, Form Experience]`, sehingga
+   tombol Back perangkat atau browser menjalankan `pop()` dan pengguna kembali ke menu.
+   `pop()` juga dipakai untuk menutup dialog ringkasan, karena dialog juga sebuah route.
+
+   Opsi di drawer memakai `Navigator.pushReplacement()`. Saat pengguna berada di form
+   Experience dan memilih **Home**, route form diganti dengan route `MyHomePage` baru,
+   jadi form tidak tertinggal di tumpukan. Ini mencegah tumpukan terus bertambah saat
+   pengguna berpindah-pindah lewat drawer, dan mencegah tombol Back membuka lagi form
+   yang sudah ditinggalkan.
+
+2. **Peran `Scaffold`, `AppBar`, dan `Drawer` dalam menjaga struktur halaman tetap
+   konsisten, dan contoh warna tema di lebih dari satu halaman.**
+
+   `Scaffold` adalah kerangka yang sama untuk setiap halaman: slot `appBar` di atas,
+   `drawer` di samping, dan `body` di tengah. Karena ketiga halaman (menu, form proyek,
+   form Experience) memakai kerangka itu, pengguna selalu menemukan judul di tempat yang
+   sama dan ikon menu ☰ di pojok kiri atas. `Scaffold` juga yang otomatis menampilkan
+   ikon ☰ saat `drawer` diisi.
+
+   `AppBar` memberi judul halaman, sehingga pengguna tahu sedang berada di mana.
+   `Drawer` diisi widget yang sama, `const LeftDrawer()`, di ketiga halaman. Isi navigasi
+   cukup ditulis sekali di `widgets/left_drawer.dart`. Saat opsi Add Experience
+   ditambahkan, opsi itu langsung muncul di semua halaman.
+
+   Contoh warna tema: warna aksen website `#A05A76` dipasang sekali di `main.dart`
+   (`ColorScheme.fromSeed`). Halaman lain tidak menulis kode warna sendiri, tetapi
+   mengambilnya dengan `Theme.of(context).colorScheme.primary`. Warna itu dipakai
+   `AppBar` di halaman utama, form proyek, dan form Experience, juga header drawer.
+   Tombol `FilledButton` Simpan di form Experience mengambil warna yang sama secara
+   otomatis dari tema.
+
+3. **Alasan tata letak form dipilih, serta peran widget pengatur jarak dan widget
+   penggulir saat ruang layar terbatas.**
+
+   Form Experience disusun dalam satu `Column`: satu kolom isian per baris, dari atas ke
+   bawah, dengan tombol Simpan di paling bawah. Susunan satu kolom paling mudah dibaca
+   di layar ponsel yang sempit, dan urutannya sama dengan urutan pengisian. Saya memakai
+   `CrossAxisAlignment.stretch` agar semua kolom selebar layar dan rata kiri-kanan.
+
+   Widget pengatur jarak:
+   - `Padding` (lewat `SingleChildScrollView.padding`) memberi jarak 16 piksel dari tepi
+     layar, agar isian tidak menempel di pinggir.
+   - `SizedBox(height: ...)` memberi jarak antar-kolom. Jaraknya sedikit lebih besar
+     sebelum tombol Simpan, untuk memisahkan isian dari aksi.
+   - `ConstrainedBox(maxWidth: 600)` dan `Center` membatasi lebar form di layar lebar
+     (web/tablet), agar kolom isian tidak melebar sampai ke tepi.
+
+   Widget penggulir: `Column` tidak bisa digulir sendiri. Saat papan ketik muncul,
+   `Scaffold` memperkecil ruang `body`, sehingga form bisa lebih tinggi dari ruang yang
+   tersisa. `SingleChildScrollView` membuat seluruh form bisa digulir, jadi kolom
+   terbawah dan tombol Simpan tetap bisa dijangkau dan tidak terjadi *overflow*
+   (garis kuning-hitam). `SafeArea` menjaga isi tidak tertutup notch atau bilah sistem.
+   Hal ini diuji di `experience_form_test.dart` dengan layar 360×640.
+
+4. **Peran `GlobalKey<FormState>`, `validator`, dan `validate()` saat Simpan ditekan;
+   contoh nilai yang ditolak; dan mengapa jenis input atau papan ketik saja belum
+   cukup.**
+
+   - `GlobalKey<FormState>` (`_formKey`) adalah "pegangan" ke state widget `Form`. Lewat
+     `_formKey.currentState`, tombol Simpan (yang letaknya di luar setiap kolom) bisa
+     memerintah seluruh form sekaligus, misalnya `validate()` atau `reset()`.
+   - `validator` adalah fungsi aturan di setiap `TextFormField`. Fungsi ini mengembalikan
+     `null` jika isian valid, atau teks pesan error jika tidak.
+   - `validate()` menjalankan `validator` semua kolom di dalam `Form`, menampilkan pesan
+     error di bawah kolom yang salah, lalu mengembalikan `true` hanya jika semuanya valid.
+     Di `_save()`, dialog ringkasan baru dipanggil jika `validate()` bernilai `true`.
+
+   Contoh nilai yang ditolak: deskripsi yang diisi `"     "` (hanya spasi). Kolomnya
+   tidak kosong, tetapi `_required` memeriksa `value.trim().isEmpty`, sehingga muncul
+   "Deskripsi tidak boleh kosong!". Contoh lain: URL gambar `foto.jpg` ditolak karena
+   tidak diawali `http://` atau `https://`.
+
+   Jenis input dan papan ketik saja tidak cukup, karena keduanya hanya **membantu**
+   pengguna mengetik, bukan **membatasi** isian. `TextInputType.url` hanya menampilkan
+   papan ketik yang punya tombol `/` dan `.com`; pengguna tetap bisa mengetik `foto.jpg`,
+   spasi, atau menempelkan teks apa pun. Di web dan desktop, papan ketik fisik
+   mengabaikan pengaturan ini sama sekali. Aturan yang sebenarnya, yaitu wajib diisi,
+   bukan hanya spasi, format URL, dan tanggal tidak di masa depan, tetap harus dicek oleh
+   `validator`. Nantinya aturan yang sama juga dicek lagi oleh Django di server, karena
+   data bisa saja dikirim tanpa melewati aplikasi.
+
 ---
 
 ## Penggunaan AI (AI Disclosure)
@@ -387,3 +538,62 @@ Beberapa kendala yang ditemukan antara lain:
 * Pemahaman terhadap kode tetap diperlukan karena AI tidak selalu memberikan implementasi yang sesuai dengan kebutuhan proyek.
 
 Oleh karena itu, setiap saran dan implementasi yang diperoleh dari AI tetap perlu diperiksa dan disesuaikan sebelum digunakan dalam proyek.
+
+### Tutorial 09 dan Tugas 8
+
+#### Tools
+
+**Claude (model Opus 5.5) melalui Claude Code** di aplikasi desktop, 18 November 2026.
+
+#### Strategi Penggunaan AI
+
+Untuk Tutorial 09 dan Tugas 8, saya mendelegasikan pengerjaan kepada AI. Saya
+memberikan berkas soal (`tutorial-9.pdf` dan `tugas-8.pdf`) lalu meminta AI
+mengerjakan seluruhnya, dengan syarat commit tidak memuat atribusi AI, dan meminta
+penjelasan setelahnya. Prompt utama yang saya berikan (diringkas):
+
+1. "bantu aku buat kerjain tutorial 9 dong" (beserta `tutorial-9.pdf`)
+2. "tolong kamu aja dong yang kerjain semuanya, habis itu jelasin ya pas aku minta"
+3. "ini kerjain jg dong" (beserta `tugas-8.pdf`)
+
+AI membaca soal, memeriksa kode proyek dan model `Experience` di repositori website
+Django, lalu menulis kode, test, dan README. Setiap langkah diperiksa dengan
+`flutter analyze` dan `flutter test` sebelum di-commit.
+
+#### Bagian yang Dibantu AI
+
+* **Kode:** seluruh kode Tutorial 09 (drawer, form proyek, navigasi tombol,
+  refactoring folder) dan Tugas 8 (`ExperienceFormPage`, kartu aksi, opsi drawer,
+  `ItemHomepage.page`).
+* **Pemilihan field:** AI memilih bagian Experience dan menyamakan field serta aturan
+  validasinya dengan `main/models.py` dan `main/forms.py` di website saya.
+* **Test:** 9 test baru untuk drawer, kedua form, validasi, dan layar selebar ponsel.
+* **Dokumentasi:** progres mingguan, jawaban pertanyaan reflektif Tugas 8, dan bagian
+  AI disclosure ini.
+* **Git:** branch `feat/individual-assignment-8` dan commit bertahap dengan format
+  conventional commits.
+
+#### Bagian yang Saya Kerjakan dan Bertanggung Jawab
+
+* Menyediakan berkas soal dan menentukan apa yang perlu dikerjakan.
+* Menentukan aturan bahwa commit tidak memuat atribusi AI.
+* Memeriksa hasil akhir dan mengumpulkan tautan commit ke SCELE.
+* Mempelajari penjelasan kode dari AI agar dapat menjelaskan implementasinya secara
+  mandiri, terutama untuk persiapan UAS.
+
+#### Keterbatasan dan Evaluasi Penggunaan AI
+
+* **Contoh kode tutorial tidak selalu benar.** Pada form proyek, setelah OK ditekan,
+  dropdown kembali ke kategori awal tetapi variabel `_category` masih menyimpan
+  kategori lama, sehingga dialog berikutnya bisa salah. AI menemukan dan memperbaikinya.
+* **Test menemukan masalah yang tidak terlihat dari kode.** Header drawer meluber
+  jika ukuran huruf diperbesar, dan halaman form yang memakai drawer tidak punya panah
+  Back di AppBar (kembali harus lewat tombol Back perangkat atau opsi Home). Keduanya
+  baru ketahuan saat test dijalankan.
+* **Pemeriksaan visual oleh AI terbatas.** Saat AI mencoba aplikasi di panel browser,
+  posisi klik tidak akurat, sehingga perilaku navigasi dan form dipastikan lewat
+  widget test, bukan lewat klik manual. Saya tetap perlu mencoba aplikasi sendiri di
+  Chrome.
+* **Pemahaman tetap tanggung jawab saya.** Karena kode ditulis AI, nilai pembelajarannya
+  bergantung pada apakah saya mempelajari penjelasannya. Hal ini saya catat sebagai
+  tindak lanjut untuk persiapan UAS.
