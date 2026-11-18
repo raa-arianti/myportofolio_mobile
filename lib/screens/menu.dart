@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
@@ -18,8 +20,19 @@ class MyHomePage extends StatelessWidget {
   /// Daftar tombol menu. Tiap item membawa nama, ikon, dan warnanya sendiri.
   final List<ItemHomepage> items = const [
     ItemHomepage("Lihat Proyek", Icons.folder, Colors.blue),
-    ItemHomepage("Tambah Proyek", Icons.add_circle, Colors.green),
+    ItemHomepage(
+      "Tambah Proyek",
+      Icons.add_circle,
+      Colors.green,
+      page: ProjectFormPage(),
+    ),
     ItemHomepage("Lihat Experience", Icons.work, Colors.orange),
+    ItemHomepage(
+      "Tambah Experience",
+      Icons.post_add,
+      Colors.teal,
+      page: ExperienceFormPage(),
+    ),
     ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
 
