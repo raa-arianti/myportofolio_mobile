@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
-import 'package:myportofolio_mobile/widgets/item_card.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:myportofolio_mobile/widgets/project_card.dart';
 
 /// Halaman utama aplikasi: tiga kartu profil di atas, lalu kisi tombol menu.
 ///
@@ -36,7 +37,10 @@ class MyHomePage extends StatelessWidget {
         ),
         // Warna diambil dari tema yang dipasang MaterialApp di main.dart.
         backgroundColor: Theme.of(context).colorScheme.primary,
+        // Ikon garis tiga (pembuka drawer) dibuat putih supaya terlihat.
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      drawer: const LeftDrawer(),
       // Bisa digulir, supaya isi tidak terpotong di layar pendek atau mode landscape.
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -53,9 +57,15 @@ class MyHomePage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Expanded membagi lebar baris sama rata untuk tiga kartu.
-                      Expanded(child: InfoCard(title: 'NPM', content: npm)),
-                      Expanded(child: InfoCard(title: 'Name', content: nama)),
-                      Expanded(child: InfoCard(title: 'Class', content: kelas)),
+                      Expanded(
+                        child: InfoCard(title: 'NPM', content: npm),
+                      ),
+                      Expanded(
+                        child: InfoCard(title: 'Name', content: nama),
+                      ),
+                      Expanded(
+                        child: InfoCard(title: 'Class', content: kelas),
+                      ),
                     ],
                   ),
                 ),

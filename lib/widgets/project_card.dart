@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Tombol menu berbentuk kartu. Saat ditekan, muncul SnackBar berisi nama
-/// tombolnya.
+/// tombolnya; tombol "Tambah Proyek" juga membuka halaman form.
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
@@ -48,7 +49,16 @@ class ItemCard extends StatelessWidget {
       borderRadius: _radius,
       child: InkWell(
         borderRadius: _radius,
-        onTap: () => _showPressedMessage(context),
+        onTap: () {
+          _showPressedMessage(context);
+          // push: form ditumpuk di atas menu, jadi tombol Back kembali ke menu.
+          if (item.name == "Tambah Proyek") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+            );
+          }
+        },
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: Column(
