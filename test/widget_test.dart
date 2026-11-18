@@ -39,8 +39,9 @@ void main() {
         item.color,
       );
 
-      // "Tambah Proyek" membuka form; kembali dulu ke menu untuk tombol berikutnya.
-      if (find.byType(ProjectFormPage).evaluate().isNotEmpty) {
+      // Tombol yang punya halaman tujuan membuka halaman itu; kembali dulu ke
+      // menu untuk tombol berikutnya.
+      if (item.page != null) {
         await tester.binding.handlePopRoute(); // tombol Back sistem
         await tester.pumpAndSettle();
       }
