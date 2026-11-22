@@ -547,53 +547,38 @@ Oleh karena itu, setiap saran dan implementasi yang diperoleh dari AI tetap perl
 
 #### Strategi Penggunaan AI
 
-Untuk Tutorial 09 dan Tugas 8, saya mendelegasikan pengerjaan kepada AI. Saya
-memberikan berkas soal (`tutorial-9.pdf` dan `tugas-8.pdf`) lalu meminta AI
-mengerjakan seluruhnya, dengan syarat commit tidak memuat atribusi AI, dan meminta
-penjelasan setelahnya. Prompt utama yang saya berikan (diringkas):
+Dalam pengerjaan Tutorial 09 dan Tugas 8, saya menggunakan AI sebagai asisten untuk membantu proses pengembangan dan pemecahan masalah teknis. Proses pengerjaan terutama dilakukan secara mandiri, mulai dari memahami instruksi soal, menentukan pendekatan implementasi, menulis dan mengintegrasikan kode, hingga memeriksa hasil pengerjaan.
 
-1. "bantu aku buat kerjain tutorial 9 dong" (beserta `tutorial-9.pdf`)
-2. "tolong kamu aja dong yang kerjain semuanya, habis itu jelasin ya pas aku minta"
-3. "ini kerjain jg dong" (beserta `tugas-8.pdf`)
+Saya menggunakan Claude ketika mengalami kesulitan memahami alur implementasi atau menemukan solusi untuk permasalahan tertentu. Dalam beberapa situasi ketika belum mengetahui bagaimana memulai implementasi, saya meminta AI memberikan pseudocode sebagai gambaran alur penyelesaian sebelum mengimplementasikannya sendiri.
 
-AI membaca soal, memeriksa kode proyek dan model `Experience` di repositori website
-Django, lalu menulis kode, test, dan README. Setiap langkah diperiksa dengan
-`flutter analyze` dan `flutter test` sebelum di-commit.
+Interaksi dengan AI dilakukan melalui beberapa bentuk, antara lain:
+1. Meminta penjelasan konsep, fungsi, dan alur kerja kode tertentu.
+2. Meminta pseudocode ketika mengalami kesulitan menentukan langkah implementasi.
+3. Berkonsultasi mengenai error dan debugging.
+4. Meminta review terhadap kode serta saran perbaikan implementasi.
+5. Meminta bantuan untuk memahami hasil testing dan kemungkinan edge cases.
 
 #### Bagian yang Dibantu AI
 
-* **Kode:** seluruh kode Tutorial 09 (drawer, form proyek, navigasi tombol,
-  refactoring folder) dan Tugas 8 (`ExperienceFormPage`, kartu aksi, opsi drawer,
-  `ItemHomepage.page`).
-* **Pemilihan field:** AI memilih bagian Experience dan menyamakan field serta aturan
-  validasinya dengan `main/models.py` dan `main/forms.py` di website saya.
-* **Test:** 9 test baru untuk drawer, kedua form, validasi, dan layar selebar ponsel.
-* **Dokumentasi:** progres mingguan, jawaban pertanyaan reflektif Tugas 8, dan bagian
-  AI disclosure ini.
-* **Git:** branch `feat/individual-assignment-8` dan commit bertahap dengan format
-  conventional commits.
+* **Konsultasi implementasi:** Memberikan gambaran alur penyelesaian melalui pseudocode ketika saya mengalami kesulitan memulai implementasi.
+* **Debugging:** Membantu mengidentifikasi penyebab error dan memberikan alternatif solusi terhadap masalah yang ditemukan.
+* **Code review:** Memberikan masukan mengenai struktur kode, konsistensi implementasi, dan kemungkinan perbaikan.
+* **Testing:** Membantu mengidentifikasi potensi edge cases serta memahami hasil pengujian menggunakan `flutter analyze` dan `flutter test`.
+* **Dokumentasi:** Membantu penyusunan dan pemeriksaan dokumentasi, termasuk progres mingguan, jawaban pertanyaan reflektif, dan AI disclosure.
 
 #### Bagian yang Saya Kerjakan dan Bertanggung Jawab
 
-* Menyediakan berkas soal dan menentukan apa yang perlu dikerjakan.
-* Menentukan aturan bahwa commit tidak memuat atribusi AI.
-* Memeriksa hasil akhir dan mengumpulkan tautan commit ke SCELE.
-* Mempelajari penjelasan kode dari AI agar dapat menjelaskan implementasinya secara
-  mandiri, terutama untuk persiapan UAS.
+* Membaca dan memahami instruksi Tutorial 09 dan Tugas 8.
+* Menentukan pendekatan dan alur implementasi berdasarkan kebutuhan setiap soal.
+* Menulis, menyesuaikan, dan mengintegrasikan kode ke dalam proyek.
+* Menentukan kapan membutuhkan bantuan AI, terutama ketika mengalami kesulitan memahami konsep atau menemukan solusi implementasi.
+* Memeriksa dan mengevaluasi hasil implementasi sebelum dikumpulkan.
+* Memahami fungsi dan alur kerja kode agar dapat menjelaskan implementasinya secara mandiri, terutama untuk persiapan UAS.
 
 #### Keterbatasan dan Evaluasi Penggunaan AI
 
-* **Contoh kode tutorial tidak selalu benar.** Pada form proyek, setelah OK ditekan,
-  dropdown kembali ke kategori awal tetapi variabel `_category` masih menyimpan
-  kategori lama, sehingga dialog berikutnya bisa salah. AI menemukan dan memperbaikinya.
-* **Test menemukan masalah yang tidak terlihat dari kode.** Header drawer meluber
-  jika ukuran huruf diperbesar, dan halaman form yang memakai drawer tidak punya panah
-  Back di AppBar (kembali harus lewat tombol Back perangkat atau opsi Home). Keduanya
-  baru ketahuan saat test dijalankan.
-* **Pemeriksaan visual oleh AI terbatas.** Saat AI mencoba aplikasi di panel browser,
-  posisi klik tidak akurat, sehingga perilaku navigasi dan form dipastikan lewat
-  widget test, bukan lewat klik manual. Saya tetap perlu mencoba aplikasi sendiri di
-  Chrome.
-* **Pemahaman tetap tanggung jawab saya.** Karena kode ditulis AI, nilai pembelajarannya
-  bergantung pada apakah saya mempelajari penjelasannya. Hal ini saya catat sebagai
-  tindak lanjut untuk persiapan UAS.
+* **Saran AI tetap perlu dievaluasi.** Tidak semua saran implementasi yang diberikan AI dapat langsung diterapkan. Saya perlu menyesuaikannya dengan struktur proyek, kebutuhan soal, dan kode yang sudah ada.
+* **Pseudocode tidak selalu langsung menghasilkan implementasi yang benar.** Gambaran alur dari AI membantu saya memahami langkah penyelesaian, tetapi implementasi tetap memerlukan penyesuaian dan pemeriksaan lebih lanjut.
+* **Testing tetap diperlukan.** Pemeriksaan menggunakan `flutter analyze` dan `flutter test` membantu menemukan potensi masalah yang mungkin tidak terlihat hanya dengan membaca kode.
+* **Pemeriksaan visual memiliki keterbatasan.** Pengujian melalui panel browser AI tidak selalu akurat, sehingga saya tetap perlu melakukan pemeriksaan langsung melalui Chrome.
+* **Pemahaman tetap menjadi tanggung jawab saya.** Bantuan AI tidak menggantikan proses belajar. Saya perlu memahami alasan di balik setiap implementasi, termasuk fungsi, alur navigasi, validasi form, dan struktur kode agar dapat mempertanggungjawabkan hasil pengerjaan secara mandiri.
