@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v2
+    with:
+      setup: dart run build_runner build --delete-conflicting-outputs
+      coverage_excludes: "**/*.g.dart"
+      min_coverage: 0
+      timeout_minutes: 15
+
+  build_apk:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      # Kalau variabel repo API_BASE_URL belum diisi, pakai bawaan config.dart (10.0.2.2).
+      - run: flutter build apk --release ${{ vars.API_BASE_URL && format('--dart-define=API_BASE_URL={0}', vars.API_BASE_URL) || '' }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk

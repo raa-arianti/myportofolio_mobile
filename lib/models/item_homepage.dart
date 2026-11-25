@@ -20,5 +20,18 @@ class ItemHomepage {
   /// hanya menampilkan SnackBar (halamannya belum dibuat).
   final Widget? page;
 
-  const ItemHomepage(this.name, this.icon, this.color, {this.page});
+  /// `true` kalau [page] hanya boleh dibuka setelah login (lihat `ensureLoggedIn`).
+  final bool requiresLogin;
+
+  /// `true` untuk tombol Logout: menekannya mencabut token login.
+  final bool isLogout;
+
+  const ItemHomepage(
+    this.name,
+    this.icon,
+    this.color, {
+    this.page,
+    this.requiresLogin = false,
+    this.isLogout = false,
+  });
 }

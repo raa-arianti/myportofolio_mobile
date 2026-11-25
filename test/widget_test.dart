@@ -1,14 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/main.dart';
+import 'package:myportofolio_mobile/screens/login_screen.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/screens/project_detail_screen.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+
+import 'fake_api.dart';
+
+Future<void> login(WidgetTester tester) async {
+  expect(find.byType(LoginScreen), findsOneWidget);
+  await tester.enterText(
+    find.widgetWithText(TextFormField, 'Username'),
+    'owner',
+  );
+  await tester.enterText(
+    find.widgetWithText(TextFormField, 'Password'),
+    'secret',
+  );
+  await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+  await tester.pumpAndSettle();
+}
 
 void main() {
   final items = const MyHomePage().items;
 
   testWidgets('kartu profil menampilkan identitas pemilik', (tester) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
 
     expect(find.text('2506551775'), findsOneWidget);
     expect(find.text('Ira Arianti Alawiah'), findsOneWidget);
@@ -23,9 +45,10 @@ void main() {
   testWidgets('tiap tombol memunculkan SnackBar sesuai namanya', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
 
-    for (final item in items) {
+    for (final item in items.where((item) => !item.isLogout)) {
+      await tester.ensureVisible(find.text(item.name));
       await tester.tap(find.text(item.name));
       await tester.pumpAndSettle();
 
@@ -33,92 +56,146 @@ void main() {
         find.text('Kamu telah menekan tombol ${item.name}!'),
         findsOneWidget,
       );
-      // SnackBar memakai warna tombol yang ditekan.
       expect(
         tester.widget<SnackBar>(find.byType(SnackBar)).backgroundColor,
         item.color,
       );
 
-      // Tombol yang punya halaman tujuan membuka halaman itu; kembali dulu ke
-      // menu untuk tombol berikutnya.
+      // Halaman tujuan (atau layar login) ditutup dulu sebelum tombol berikutnya.
       if (item.page != null) {
-        await tester.binding.handlePopRoute(); // tombol Back sistem
+        await tester.binding.handlePopRoute();
         await tester.pumpAndSettle();
       }
     }
   });
 
-  testWidgets('tombol Tutup menyembunyikan SnackBar', (tester) async {
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Lihat Proyek memuat data API lalu membuka detail', (
+    tester,
+  ) async {
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
 
+    await tester.tap(find.text('Lihat Proyek'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ProjectListScreen), findsOneWidget);
+    expect(find.text('Sortify'), findsOneWidget);
+
+    await tester.tap(find.text('Sortify'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ProjectDetailScreen), findsOneWidget);
+    expect(find.text('Starred by: a, b'), findsOneWidget);
+  });
+
+  testWidgets('Tambah Proyek meminta login dulu, lalu membuka form', (
+    tester,
+  ) async {
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
+
+    await tester.tap(find.text('Tambah Proyek'));
+    await tester.pumpAndSettle();
+    await login(tester);
+    expect(find.byType(ProjectFormPage), findsOneWidget);
+
+    // Sudah login: kembali ke menu, lalu form langsung terbuka tanpa login.
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Tambah Proyek'));
+    await tester.pumpAndSettle();
+    expect(find.byType(ProjectFormPage), findsOneWidget);
+  });
+
+  testWidgets('password salah menampilkan SnackBar dan tetap di login', (
+    tester,
+  ) async {
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
+
+    await tester.tap(find.text('Tambah Proyek'));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Username'),
+      'owner',
+    );
+    await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'x');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Login failed (status 400).'), findsOneWidget);
+    expect(find.byType(LoginScreen), findsOneWidget);
+  });
+
+  testWidgets('drawer menampilkan Login, lalu Logout setelah login', (
+    tester,
+  ) async {
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
+
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ListTile, 'Logout'), findsNothing);
+    await tester.tap(find.text('Login'));
+    await tester.pumpAndSettle();
+    await login(tester);
+
+    // Kartu Logout di menu sekarang mencabut token.
+    await tester.tap(find.byType(ModalBarrier).last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Open navigation menu'));
+    await tester.pumpAndSettle();
+    expect(find.widgetWithText(ListTile, 'Logout'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ListTile, 'Logout'));
+    await tester.pumpAndSettle();
+    expect(find.text('Kamu berhasil logout.'), findsOneWidget);
+  });
+
+  testWidgets('tombol Tutup menyembunyikan SnackBar', (tester) async {
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
+
+    await tester.ensureVisible(find.text('Logout'));
     await tester.tap(find.text('Logout'));
     await tester.pumpAndSettle();
+    expect(find.text('Kamu belum login.'), findsOneWidget);
     await tester.tap(find.text('Tutup'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsNothing);
   });
 
-  testWidgets('tombol Tambah Proyek membuka form, Back kembali ke menu', (
+  testWidgets('form proyek memvalidasi lalu POST dengan header Token', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
-
+    final requests = <http.Request>[];
+    await tester.pumpWidget(MyApp(apiClient: fakeApi(requests: requests)));
     await tester.tap(find.text('Tambah Proyek'));
     await tester.pumpAndSettle();
-    expect(find.byType(ProjectFormPage), findsOneWidget);
+    await login(tester);
 
-    // Form punya drawer, jadi AppBar-nya berisi ikon menu, bukan panah Back.
-    // Kembali ke menu memakai tombol Back sistem (HP/browser), sesuai tutorial.
-    await tester.binding.handlePopRoute();
+    await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
-    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.text('Title tidak boleh kosong!'), findsOneWidget);
+    expect(find.text('Description tidak boleh kosong!'), findsOneWidget);
+
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Title'),
+      'Sayangin',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Description'),
+      'Marketplace preloved',
+    );
+    await tester.enterText(
+      find.widgetWithText(TextFormField, 'Thumbnail'),
+      'sortify-card.png',
+    );
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    final post = requests.last;
+    expect(post.method, 'POST');
+    expect(post.headers['Authorization'], 'Token abc123');
+    expect(jsonDecode(post.body), {
+      'title': 'Sayangin',
+      'description': 'Marketplace preloved',
+      'thumbnail': 'sortify-card.png',
+    });
+    expect(find.text('Proyek berhasil ditambahkan!'), findsOneWidget);
+    expect(find.text('Judul: Sayangin'), findsOneWidget);
   });
-
-  testWidgets('drawer berpindah ke form dan kembali ke Home', (tester) async {
-    await tester.pumpWidget(const MyApp());
-
-    await tester.tap(find.byTooltip('Open navigation menu'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Add Project'));
-    await tester.pumpAndSettle();
-    expect(find.byType(ProjectFormPage), findsOneWidget);
-
-    await tester.tap(find.byTooltip('Open navigation menu'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Home'));
-    await tester.pumpAndSettle();
-    expect(find.byType(MyHomePage), findsOneWidget);
-  });
-
-  testWidgets(
-    'form menolak kolom wajib kosong dan menampilkan isian di pop-up',
-    (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: ProjectFormPage()));
-
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-      expect(find.text('Nama proyek tidak boleh kosong!'), findsOneWidget);
-      expect(find.text('Deskripsi proyek tidak boleh kosong!'), findsOneWidget);
-      expect(find.byType(AlertDialog), findsNothing);
-
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Nama Proyek'),
-        'Sayangin',
-      );
-      await tester.enterText(
-        find.widgetWithText(TextFormField, 'Deskripsi Proyek'),
-        'Marketplace preloved',
-      );
-      await tester.tap(find.text('Save'));
-      await tester.pumpAndSettle();
-      expect(find.text('Proyek berhasil ditambahkan!'), findsOneWidget);
-      expect(find.text('Nama Proyek: Sayangin'), findsOneWidget);
-      expect(find.text('Kategori: Web Development'), findsOneWidget);
-
-      await tester.tap(find.text('OK'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsNothing);
-    },
-  );
 }

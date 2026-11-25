@@ -4,6 +4,8 @@ import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 
+import 'fake_api.dart';
+
 // Mengikuti "Petunjuk Pengujian" Tugas 8: buka form dari kartu dan drawer,
 // simpan dengan input tidak valid lalu valid, dan kembali ke halaman utama.
 
@@ -25,7 +27,7 @@ void main() {
   testWidgets('kartu Tambah Experience membuka form, Back kembali ke menu', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
 
     await tester.ensureVisible(find.text('Tambah Experience'));
     await tester.tap(find.text('Tambah Experience'));
@@ -40,7 +42,7 @@ void main() {
   testWidgets('drawer membuka form Experience, opsi Home kembali ke menu', (
     tester,
   ) async {
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(apiClient: fakeApi()));
 
     await openDrawer(tester);
     expect(find.text('Home'), findsOneWidget);

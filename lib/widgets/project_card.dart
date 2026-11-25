@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
+import 'package:provider/provider.dart';
 
 /// Tombol menu berbentuk kartu. Saat ditekan, muncul SnackBar berisi nama
 /// tombolnya, lalu halaman tujuannya ([ItemHomepage.page]) dibuka kalau ada.
@@ -16,7 +19,7 @@ class ItemCard extends StatelessWidget {
   ///
   /// SnackBar yang sedang tampil disembunyikan dulu, supaya menekan beberapa
   /// tombol berturut-turut tidak membuat pesan lama mengantre.
-  void _showPressedMessage(BuildContext context) {
+  void _showPressedMessage(BuildContext context, [String? text]) {
     // ScaffoldMessenger dicari lewat context: ia berada di atas widget ini di
     // widget tree, dipasang oleh MaterialApp.
     final messenger = ScaffoldMessenger.of(context);
@@ -24,7 +27,7 @@ class ItemCard extends StatelessWidget {
       ..hideCurrentSnackBar()
       ..showSnackBar(
         SnackBar(
-          content: Text("Kamu telah menekan tombol ${item.name}!"),
+          content: Text(text ?? "Kamu telah menekan tombol ${item.name}!"),
           // Warna SnackBar mengikuti warna tombol yang ditekan.
           backgroundColor: item.color,
           // SnackBar yang punya action secara bawaan tidak hilang sendiri.
@@ -48,17 +51,32 @@ class ItemCard extends StatelessWidget {
       borderRadius: _radius,
       child: InkWell(
         borderRadius: _radius,
-        onTap: () {
+        onTap: () async {
+          if (item.isLogout) {
+            final auth = context.read<AuthState>();
+            if (!auth.isLoggedIn) {
+              _showPressedMessage(context, "Kamu belum login.");
+              return;
+            }
+            await auth.logout();
+            if (context.mounted) {
+              _showPressedMessage(context, "Kamu berhasil logout.");
+            }
+            return;
+          }
+
           _showPressedMessage(context);
+          final page = item.page;
+          if (page == null) return;
+          // Halaman yang dilindungi baru dibuka setelah login berhasil.
+          if (item.requiresLogin && !await ensureLoggedIn(context)) return;
+          if (!context.mounted) return;
           // push: halaman tujuan ditumpuk di atas menu, jadi tombol Back
           // bawaan perangkat membawa pengguna kembali ke menu.
-          final page = item.page;
-          if (page != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => page),
-            );
-          }
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => page),
+          );
         },
         child: Padding(
           padding: const EdgeInsets.all(8),
