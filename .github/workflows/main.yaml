@@ -15,6 +15,7 @@ jobs:
     with:
       setup: dart run build_runner build --delete-conflicting-outputs
       coverage_excludes: "**/*.g.dart"
+      flutter_version: "3.47.5"
       min_coverage: 0
       timeout_minutes: 15
 
@@ -23,14 +24,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # Gradle 9 + Android Gradle Plugin 9 butuh JDK 17 atau lebih baru.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      # Versi Flutter disamakan dengan laptop dan job build supaya hasilnya sama.
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: "3.47.5"
           cache: true
       - run: flutter pub get
       - run: dart run build_runner build --delete-conflicting-outputs
       # Kalau variabel repo API_BASE_URL belum diisi, pakai bawaan config.dart (10.0.2.2).
-      - run: flutter build apk --release ${{ vars.API_BASE_URL && format('--dart-define=API_BASE_URL={0}', vars.API_BASE_URL) || '' }}
+      # Kalau gagal, potongan log terakhir ditampilkan sebagai anotasi error di ringkasan run.
+      - name: Build release APK
+        shell: bash
+        run: |
+          flutter build apk --release ${{ vars.API_BASE_URL && format('--dart-define=API_BASE_URL={0}', vars.API_BASE_URL) || '' }} 2>&1 | tee build.log || {
+            echo "::error title=flutter build apk::$(tail -c 3500 build.log | tr '\n' ' ')"
+            exit 1
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
