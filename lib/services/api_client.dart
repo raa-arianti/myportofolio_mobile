@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:myportofolio_mobile/config.dart';
+import 'package:myportofolio_mobile/models/experience.dart';
 import 'package:myportofolio_mobile/models/project.dart';
 
 /// Dilempar ketika API membalas dengan status di luar 2xx.
@@ -74,6 +75,47 @@ class ApiClient {
   Future<void> logout({required String token}) async {
     final response = await _client.post(
       _uri('/api/v1/auth/logout/'),
+      headers: _jsonHeaders(token: token),
+    );
+    _ensureSuccess(response);
+  }
+
+  // ---------- Experience (/api/v1/experience/) ----------
+
+  /// Publik: tidak perlu token.
+  Future<List<Experience>> getExperiences() async {
+    final response = await _client.get(
+      _uri('/api/v1/experience/'),
+      headers: const {'Accept': 'application/json'},
+    );
+    _ensureSuccess(response);
+
+    final decoded = jsonDecode(response.body) as List<dynamic>;
+    return decoded
+        .map((item) => Experience.fromJson(item as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Butuh token pemilik portofolio; Django membalas 201 dengan data lengkap.
+  Future<Experience> createExperience(
+    Experience experience, {
+    required String token,
+  }) async {
+    final response = await _client.post(
+      _uri('/api/v1/experience/'),
+      headers: _jsonHeaders(token: token),
+      body: jsonEncode(experience.toJson()),
+    );
+    _ensureSuccess(response);
+    return Experience.fromJson(
+      jsonDecode(response.body) as Map<String, dynamic>,
+    );
+  }
+
+  /// Butuh token pemilik portofolio; Django membalas 204 No Content.
+  Future<void> deleteExperience(String id, {required String token}) async {
+    final response = await _client.delete(
+      _uri('/api/v1/experience/$id/'),
       headers: _jsonHeaders(token: token),
     );
     _ensureSuccess(response);
