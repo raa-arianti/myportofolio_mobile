@@ -31,7 +31,13 @@ class _ExperienceListScreenState extends State<ExperienceListScreen> {
     setState(() {
       _experiencesFuture = future;
     });
-    await future;
+    // Error sudah ditampilkan FutureBuilder; di sini cukup ditunggu supaya
+    // RefreshIndicator tahu kapan selesai, tanpa melempar error yang tak tertangkap.
+    try {
+      await future;
+    } on ApiException {
+      // ditangani oleh FutureBuilder
+    }
   }
 
   /// Buka form (wajib login), lalu muat ulang daftar setelah kembali supaya

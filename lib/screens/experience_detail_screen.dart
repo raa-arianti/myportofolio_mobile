@@ -76,7 +76,7 @@ class _ExperienceDetailScreenState extends State<ExperienceDetailScreen> {
 
   String _formatDate(DateTime? date) => date == null
       ? '-'
-      : MaterialLocalizations.of(context).formatMediumDate(date.toLocal());
+      : MaterialLocalizations.of(context).formatShortDate(date.toLocal());
 
   @override
   Widget build(BuildContext context) {
