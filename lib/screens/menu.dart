@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/models/item_homepage.dart';
 import 'package:myportofolio_mobile/screens/experience_form.dart';
+import 'package:myportofolio_mobile/screens/experience_list_screen.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 import 'package:myportofolio_mobile/widgets/info_card.dart';
@@ -33,12 +34,18 @@ class MyHomePage extends StatelessWidget {
       page: ProjectFormPage(),
       requiresLogin: true,
     ),
-    ItemHomepage("Lihat Experience", Icons.work, Colors.orange),
+    ItemHomepage(
+      "Lihat Experience",
+      Icons.work,
+      Colors.orange,
+      page: ExperienceListScreen(),
+    ),
     ItemHomepage(
       "Tambah Experience",
       Icons.post_add,
       Colors.teal,
       page: ExperienceFormPage(),
+      requiresLogin: true,
     ),
     ItemHomepage("Logout", Icons.logout, Colors.red, isLogout: true),
   ];
