@@ -1,5 +1,11 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/models/experience.dart';
+import 'package:myportofolio_mobile/screens/experience_list_screen.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:provider/provider.dart';
 
 /// Halaman form untuk menambah pengalaman (Experience).
 ///
@@ -11,9 +17,15 @@ import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 /// - `thumbnail`: opsional, harus URL http(s) yang valid;
 /// - `ended_at`: opsional; kosong berarti pengalaman masih berjalan.
 ///
-/// Data belum dikirim ke Django; setelah Simpan, ringkasannya tampil di dialog.
+/// Saat Simpan ditekan dengan isian valid, data dikirim ke Django lewat
+/// `POST /api/v1/experience/` memakai token login (lihat [ensureLoggedIn]).
 class ExperienceFormPage extends StatefulWidget {
-  const ExperienceFormPage({super.key});
+  const ExperienceFormPage({this.openedFromList = false, super.key});
+
+  /// `true` kalau form dibuka dari [ExperienceListScreen]. Setelah simpan,
+  /// "Lihat daftar" cukup kembali ke daftar itu (yang lalu memuat ulang),
+  /// bukan membuka daftar kedua.
+  final bool openedFromList;
 
   /// Pilihan kategori, sama dengan `Experience.EXPERIENCE_CHOICES` di Django:
   /// nilai yang disimpan → label yang ditampilkan.
@@ -47,6 +59,7 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
 
   String _category = 'full-time'; // default, sama dengan model Django
   DateTime? _endDate; // null = masih berjalan
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -132,14 +145,67 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
     setState(() => _category = 'full-time');
   }
 
-  void _save() {
+  Future<void> _save() async {
     // validate() menjalankan semua validator; pesan error muncul di kolomnya.
     if (!_formKey.currentState!.validate()) return;
+    // Halaman ini bisa dibuka lewat jalur yang tidak dijaga, jadi saat kirim
+    // tetap dipastikan sudah login.
+    if (!await ensureLoggedIn(context)) return;
+    if (!mounted) return;
 
+    final auth = context.read<AuthState>();
     final thumbnail = _thumbnail.text.trim();
+    final end = _endDate;
+    final newExperience = Experience(
+      title: _title.text.trim(),
+      description: _description.text.trim(),
+      category: _category,
+      thumbnail: thumbnail.isEmpty ? null : thumbnail,
+      // Dikirim sebagai tanggal UTC (tengah malam) supaya Django tidak
+      // menggeser harinya karena zona waktu.
+      endedAt: end == null ? null : DateTime.utc(end.year, end.month, end.day),
+    );
+
+    setState(() => _isSubmitting = true);
+    try {
+      final created = await context.read<ApiClient>().createExperience(
+        newExperience,
+        token: auth.token!,
+      );
+      if (!mounted) return;
+      _showCreatedDialog(created);
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      if (e.statusCode == 401) {
+        // Token sudah dicabut atau kedaluwarsa: hapus sesi, lalu minta login ulang.
+        await auth.logout();
+        if (!mounted) return;
+        _showError('Sesi berakhir, silakan login ulang.');
+        await ensureLoggedIn(context);
+      } else {
+        _showError(switch (e.statusCode) {
+          403 => 'Hanya pemilik portofolio yang boleh menambah experience.',
+          400 => 'Data ditolak server. Periksa kembali isianmu.',
+          _ => 'Gagal menyimpan (status ${e.statusCode}).',
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  /// Ringkasan entri yang sudah tersimpan di Django, dengan pilihan menambah
+  /// lagi atau membuka daftar Experience (yang memuat data terbaru).
+  void _showCreatedDialog(Experience created) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Experience berhasil disimpan!'),
           content: SingleChildScrollView(
@@ -147,16 +213,16 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                _SummaryRow('Judul', _title.text.trim()),
-                _SummaryRow('Deskripsi', _description.text.trim()),
+                _SummaryRow('Judul', created.title),
+                _SummaryRow('Deskripsi', created.description),
                 _SummaryRow(
                   'Kategori',
-                  ExperienceFormPage.categories[_category]!,
+                  created.categoryLabel.isEmpty
+                      ? ExperienceFormPage.categories[created.category] ??
+                            created.category
+                      : created.categoryLabel,
                 ),
-                _SummaryRow(
-                  'URL gambar',
-                  thumbnail.isEmpty ? '(tidak ada)' : thumbnail,
-                ),
+                _SummaryRow('URL gambar', created.thumbnail ?? '(tidak ada)'),
                 _SummaryRow(
                   'Tanggal selesai',
                   _endDate == null ? 'Masih berjalan' : _endDateText.text,
@@ -166,10 +232,26 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
           ),
           actions: [
             TextButton(
-              child: const Text('OK'),
+              child: const Text('Tambah lagi'),
               onPressed: () {
-                Navigator.pop(context); // tutup dialog, kembali ke form
+                Navigator.pop(dialogContext); // tutup dialog, kembali ke form
                 _resetForm();
+              },
+            ),
+            FilledButton(
+              child: const Text('Lihat daftar'),
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                if (widget.openedFromList) {
+                  Navigator.pop(context);
+                } else {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ExperienceListScreen(),
+                    ),
+                  );
+                }
               },
             ),
           ],
@@ -296,8 +378,14 @@ class _ExperienceFormPageState extends State<ExperienceFormPage> {
                     const SizedBox(height: 24),
                     // === Tombol Simpan ===
                     FilledButton.icon(
-                      onPressed: _save,
-                      icon: const Icon(Icons.save),
+                      onPressed: _isSubmitting ? null : _save,
+                      icon: _isSubmitting
+                          ? const SizedBox(
+                              height: 18,
+                              width: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.save),
                       label: const Text('Simpan'),
                     ),
                   ],
