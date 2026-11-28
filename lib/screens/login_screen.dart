@@ -34,7 +34,15 @@ class _LoginScreenState extends State<LoginScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text('Login failed (status ${e.statusCode}).')),
+          SnackBar(
+            // Django membalas 400 kalau username/password salah; kode status
+            // tidak berarti apa-apa bagi pengguna, jadi diganti pesan biasa.
+            content: Text(
+              e.statusCode == 400
+                  ? 'Username atau password salah.'
+                  : 'Login gagal (status ${e.statusCode}).',
+            ),
+          ),
         );
     } finally {
       // Setelah pop, widget sudah tidak terpasang, jadi setState dilewati.

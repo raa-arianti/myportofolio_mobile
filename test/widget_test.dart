@@ -118,7 +118,7 @@ void main() {
     await tester.tap(find.widgetWithText(ElevatedButton, 'Login'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Login failed (status 400).'), findsOneWidget);
+    expect(find.text('Username atau password salah.'), findsOneWidget);
     expect(find.byType(LoginScreen), findsOneWidget);
   });
 

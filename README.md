@@ -809,51 +809,45 @@ Interaksi dengan AI dilakukan melalui beberapa bentuk, antara lain:
 
 #### Strategi Penggunaan AI
 
-Untuk Tutorial 10 dan Tugas 9, penggunaan AI saya **jauh lebih besar** daripada
-tugas-tugas sebelumnya, dan saya ingin menuliskannya dengan jujur. Karena waktu yang
-mepet, saya memberikan PDF instruksi Tutorial 10 dan Tugas 9 kepada Claude Code dan
-memintanya mengerjakan implementasinya langsung di repositori Django dan Flutter saya,
-lalu memeriksa kesesuaiannya dengan instruksi, menjalankan test, dan melakukan commit
-serta push. Saya berencana mempelajari ulang seluruh kode ini setelahnya agar bisa
-menjelaskan dan mempertanggungjawabkannya sendiri, terutama untuk persiapan UAS.
+Dalam pengerjaan Tutorial 10 dan Tugas 9, saya menggunakan AI jauh lebih intensif dibandingkan tugas-tugas sebelumnya. Hal ini terutama karena terdapat beberapa konsep dan kebutuhan implementasi baru yang belum sepenuhnya saya pahami, sehingga saya lebih sering meminta bantuan Claude dalam menuliskan kode dan menentukan pendekatan implementasi.
+
+Proses pengerjaan tetap saya lakukan secara aktif melalui kombinasi implementasi mandiri dan diskusi dengan Claude. Untuk bagian yang sudah saya pahami, saya tetap mengerjakan dan menyesuaikan kode sendiri. Sementara itu, ketika menghadapi implementasi yang belum saya kuasai, saya meminta Claude memberikan contoh kode, membantu menyusun implementasi, menjelaskan alur kerja, serta memberikan alternatif penyelesaian.
+
+Interaksi dengan AI dilakukan secara iteratif. Saya tidak hanya menerima hasil implementasi, tetapi juga menjalankan aplikasi, memeriksa hasil pengujian, mengidentifikasi masalah, dan mendiskusikan perbaikannya bersama Claude. Dengan demikian, AI berperan sebagai alat bantu implementasi dan konsultasi teknis selama proses pengembangan.
+
+Penggunaan AI mencakup beberapa aktivitas:
+1. Meminta penjelasan konsep dan alur implementasi fitur baru.
+2. Meminta bantuan penulisan kode ketika belum memahami cara mengimplementasikan kebutuhan tertentu.
+3. Mendiskusikan struktur kode, integrasi antara frontend Flutter dan backend Django, serta penanganan autentikasi.
+4. Meminta bantuan debugging dan menganalisis hasil pengujian.
+5. Mendiskusikan alternatif perbaikan berdasarkan masalah yang ditemukan saat pengujian manual.
 
 #### Bagian yang Dibantu AI
 
-* **Backend Django (Tutorial 10):** konfigurasi `TokenAuthentication`, CORS, endpoint
-  token login dan logout, serta penyesuaian dan penambahan test API.
-* **Flutter:** model `Project` dan `Experience`, `ApiClient`, `AuthState`, `LoginScreen`,
-  `ensureLoggedIn`, layar daftar dan detail, refactor form Project dan Experience ke
-  POST, fitur hapus Experience, serta navigasi menu dan drawer.
-* **Test:** `fake_api.dart` (MockClient), unit test `ApiClient`, dan widget test.
-* **CI/CD:** workflow GitHub Actions, termasuk mendiagnosis job `build_apk` yang gagal
-  pada run pertama.
-* **Dokumentasi:** draf README ini, termasuk jawaban pertanyaan reflektif.
+* **Backend Django (Tutorial 10):** Membantu implementasi konfigurasi `TokenAuthentication`, CORS, endpoint token login dan logout, serta penyesuaian dan penambahan test API.
+* **Flutter:** Membantu penulisan dan pengembangan beberapa bagian implementasi, termasuk model `Project` dan `Experience`, `ApiClient`, `AuthState`, `LoginScreen`, `ensureLoggedIn`, halaman daftar dan detail, integrasi form Project dan Experience dengan metode POST, fitur hapus Experience, serta navigasi menu dan drawer.
+* **Test:** Membantu implementasi `fake_api.dart` menggunakan `MockClient`, unit test `ApiClient`, dan widget test, serta mendiskusikan hasil pengujian dan perbaikan yang diperlukan.
+* **CI/CD:** Membantu konfigurasi workflow GitHub Actions dan menganalisis kemungkinan penyebab kegagalan job `build_apk` pada run pertama.
+* **Dokumentasi:** Membantu menyusun dan memeriksa draf README, termasuk jawaban pertanyaan reflektif dan dokumentasi progres pengerjaan.
 
 #### Bagian yang Saya Kerjakan dan Bertanggung Jawab
 
-* Memberikan instruksi tugas dan menentukan bahwa tugas ini dikerjakan di repositori
-  web dan mobile yang sudah ada.
-* Bertanggung jawab atas hasil yang dikumpulkan, termasuk mempelajari ulang kodenya dan
-  alurnya (`ensureLoggedIn` → `AuthState.login` → header `Authorization: Token`,
-  `FutureBuilder` dengan `Future` dari `initState`, dan penanganan `ApiException`).
+* Membaca dan memahami instruksi Tutorial 10 dan Tugas 9 serta menentukan pengembangan yang diperlukan pada repositori Django dan Flutter yang sudah ada.
+* Menentukan kebutuhan fitur dan menyesuaikan implementasi dengan struktur serta model data pada proyek sebelumnya.
+* Tetap mengerjakan bagian implementasi yang sudah saya pahami secara mandiri dan menentukan bagian yang membutuhkan bantuan AI.
+* Berdiskusi dengan Claude mengenai pendekatan implementasi, memahami kode yang dihasilkan, dan menentukan penyesuaian yang diperlukan.
+* Menjalankan pemeriksaan kode dan pengujian aplikasi, termasuk `flutter analyze`, `flutter test`, serta pengujian manual menggunakan server Django lokal dan Flutter di Chrome.
+* Mengidentifikasi masalah yang tidak ditemukan oleh pengujian otomatis dan mendiskusikan perbaikannya bersama Claude.
+* Memeriksa kembali hasil implementasi setelah perubahan dilakukan untuk memastikan fitur berjalan sesuai kebutuhan.
+* Bertanggung jawab atas hasil akhir yang dikumpulkan, termasuk mempelajari kembali alur autentikasi (`ensureLoggedIn` → `AuthState.login` → header `Authorization: Token`), penggunaan `FutureBuilder` dengan `Future` dari `initState`, dan penanganan `ApiException`.
 
 #### Keterbatasan dan Evaluasi Penggunaan AI
 
-* **AI tidak bisa melihat semua hal.** Lingkungan AI tidak memiliki Android SDK, sehingga
-  build APK tidak bisa dicoba secara lokal. Penyebab job `build_apk` yang gagal pertama
-  kali juga tidak bisa dibaca langsung karena log GitHub Actions membutuhkan login, jadi
-  perbaikannya (mengunci versi Flutter dan JDK, serta menampilkan error build sebagai
-  anotasi) awalnya berupa dugaan. Run berikutnya membuktikan perbaikan itu berhasil:
-  kedua job hijau dan artefak `app-release-apk` terbentuk.
-* **Instruksi tutorial tidak selalu cocok dengan proyek saya.** Contoh di PDF memakai
-  field `tech_stack` dan `project_url`, padahal serializer saya memakai `thumbnail`. AI
-  harus menyesuaikan model dengan backend yang sebenarnya, sesuai arahan tutorial.
-* **Test menemukan bug di kode yang ditulis AI sendiri**, misalnya error tak tertangkap
-  saat menekan Retry dan tanggal tanpa tahun. Ini menunjukkan kode AI tetap perlu diuji
-  dan tidak bisa langsung dipercaya.
-* **Aplikasi belum diuji manual di emulator atau HP.** Pengujian otomatis memakai
-  backend palsu (`MockClient`), sehingga uji end-to-end dengan server Django sungguhan
-  tetap perlu saya lakukan sendiri.
-* **Pemahaman tetap tanggung jawab saya.** Karena sebagian besar kode ditulis AI, saya
-  perlu mempelajarinya secara menyeluruh agar tidak hanya mengumpulkan kode yang tidak
-  saya pahami.
+* **Penggunaan AI yang lebih intensif tetap membutuhkan pemeriksaan.** Karena terdapat beberapa implementasi baru yang belum saya kuasai, saya lebih banyak mengandalkan bantuan Claude untuk penulisan kode. Namun, kode yang dihasilkan tetap perlu dipahami, disesuaikan, dan diuji sebelum digunakan.
+* **Instruksi tutorial tidak selalu cocok dengan proyek saya.** Contoh di PDF menggunakan field `tech_stack` dan `project_url`, sedangkan serializer pada backend saya menggunakan `thumbnail`. Implementasi perlu disesuaikan dengan struktur backend yang sebenarnya.
+* **Test otomatis tidak selalu menangkap seluruh masalah.** Beberapa bug baru ditemukan setelah pengujian, seperti error yang tidak tertangkap ketika menekan Retry dan format tanggal yang tidak menampilkan tahun. Hal ini menunjukkan bahwa hasil implementasi maupun test yang dibantu AI tetap perlu diperiksa.
+* **Pengujian manual menemukan masalah yang tidak terlihat pada test otomatis.** Contohnya, pesan login yang salah awalnya menampilkan "Login failed (status 400)". Setelah mencoba aplikasi dengan backend Django sungguhan, saya menilai pesan tersebut kurang informatif bagi pengguna. Saya kemudian mendiskusikan dan melakukan perbaikan menjadi "Username atau password salah." di `login_screen.dart`, sekaligus menyesuaikan test terkait.
+* **Lingkungan pengembangan AI memiliki keterbatasan.** AI tidak memiliki Android SDK, sehingga build APK tidak dapat dicoba secara lokal melalui emulator. Selain itu, penyebab kegagalan awal job `build_apk` tidak dapat diperiksa langsung karena log GitHub Actions memerlukan autentikasi. Perbaikan konfigurasi kemudian diuji melalui run berikutnya yang berhasil menghasilkan kedua job berstatus hijau dan artefak `app-release-apk`.
+* **Pengujian otomatis tidak menggantikan pengujian dengan backend sebenarnya.** Test menggunakan `MockClient`, sehingga tidak sepenuhnya merepresentasikan interaksi aplikasi dengan server Django. Karena itu, saya tetap melakukan pengujian manual menggunakan server lokal untuk memeriksa alur login, pengiriman data, penghapusan data, dan penanganan sesi berakhir.
+* **Pengujian platform masih terbatas.** Pengujian manual baru dilakukan melalui Chrome. Aplikasi belum diuji menggunakan emulator Android atau perangkat Android fisik karena laptop belum memiliki Android SDK.
+* **Pemahaman tetap menjadi tanggung jawab saya.** Penggunaan AI yang lebih intensif tidak menghilangkan kebutuhan untuk memahami implementasi. Saya perlu mempelajari kembali kode, konsep, dan alur kerja aplikasi secara menyeluruh agar dapat menjelaskan serta mempertanggungjawabkan hasil pengerjaan secara mandiri, terutama untuk persiapan UAS.
